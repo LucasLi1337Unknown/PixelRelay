@@ -2,55 +2,55 @@
 
 A retro pixel chat world by Lucas — chat, meet friends, and play together.
 
-## Play the public beta
+## Open the app
 
-**[Open Pixel Relay Beta](https://pixel-relay-beta.lucasli0608.chatgpt.site/)**
+**[Pixel Relay — main site](https://pixel-relay.lucasli0608.chatgpt.site/)** · currently private, with ChatGPT sign-in.
 
-The working app is hosted on **chatgpt.site**. This repository contains its source code. GitHub Pages cannot run the authentication, server routes, or database this app needs.
+[Separate public beta](https://pixel-relay-beta.lucasli0608.chatgpt.site/) · email sign-in is available there. Main-site email sign-in awaits configuration of its Supabase verification return URL.
+
+The application is hosted on **chatgpt.site**. GitHub stores the source; GitHub Pages alone cannot run the authentication, server routes, or database used by this app.
 
 ## Features
 
-- Direct messages and group chats with owner-approved joining
+- Direct messages and owner-approved group chats
 - Searchable groups, online players, and 动态 / Moments
-- Island Chat: 2D movement, player aliases, customizable colors and hats
+- Island Chat: 2D movement, aliases, colors and hats
 - Chess and checkers with custom SVG pieces and server-validated moves
-- 你画我猜 and a shared drawing canvas with pens, shapes, text, and undo
+- 你画我猜 and collaborative drawing with pens, shapes, text and undo
 - Text chat and optional microphone chat in game rooms
 - A maximum of 10 players per game room
-- Supabase email sign-in and optional ChatGPT sign-in on Sites
 - Responsive desktop and mobile layouts
 
-## Beta and main site
+## Latest release
 
-The beta has a separate database. Test messages and player records are not copied into the main site. Promotion requires Lucas's approval and copies reviewed code only.
+Creating a game room now joins its creator on the server and opens it immediately. Rooms are deleted when their last player leaves, including their game chat, canvas and voice signaling records. Abandoned players expire after 75 seconds; stale empty rooms are cleaned up when the arcade is listed or another room action runs.
 
-This source snapshot includes the game-room entry fix tested against the Cloudflare D1 runtime: all ten slots can fill, an eleventh player is blocked, and leaving frees a slot.
+The tested beta features have been promoted to main without transferring beta conversations. Lucas approved a one-time reset of main application data. All 12 main data tables were verified empty after deployment; the separate Supabase sign-in accounts were preserved.
+
+**Migration note:** `drizzle/0002_main_fresh_start.sql` is the already-applied, main-only reset migration. It deletes application records. Review it before applying these migrations to any existing database; it must not be applied to the beta database. Follow-up deployments must not replay applied migrations.
 
 ## Development
 
-The app uses React, Vinext, Cloudflare D1, Drizzle, Supabase Auth, chess.js, and WebRTC.
-
-Requirements: Node.js 22.13 or later and the pnpm version declared in `package.json`.
+React, Vinext, Cloudflare D1, Drizzle, Supabase Auth, chess.js, and WebRTC. Node.js 22.13 or later and the pnpm version declared in `package.json` are required.
 
 ```sh
 pnpm install --frozen-lockfile
 pnpm dev
 pnpm build
 node scripts/test-game-entry-d1.cjs
+node scripts/test-multiplayer-d1.cjs
 ```
 
-Apply the SQL migrations in `drizzle/` in order to a fresh local D1 database. See [DEVELOPMENT.md](DEVELOPMENT.md) for starter runtime and local migration details.
+See [DEVELOPMENT.md](DEVELOPMENT.md) for runtime and local D1 migration instructions. The multiplayer tests use isolated, synthetic data in a local D1 runtime; they do not touch live records.
 
-Configure `SUPABASE_URL` and `SUPABASE_PUBLISHABLE_KEY` in your own runtime environment. Add your site's `/auth/confirm` URL to the Supabase allowed redirect URLs. Email delivery depends on your Supabase email configuration. No secrets, account records, or chat history are included here.
+`.openai/hosting.json` identifies the existing main Site. A new hosted copy needs its own Site identity and database. Runtime configuration and credentials are not included. Configure Supabase runtime values and an allowed `/auth/confirm` return URL before enabling email sign-in on another deployment.
 
-`.openai/hosting.json` identifies the existing beta Site. A new hosted copy needs its own Site identity and database; do not deploy it as the existing beta accidentally.
+ChatGPT sign-in relies on the trusted Sites gateway. Deployments elsewhere must replace that integration and must not trust visitor-supplied `oai-authenticated-user-*` headers.
 
-ChatGPT sign-in relies on the trusted Sites gateway. A deployment elsewhere must replace that integration and must not trust visitor-supplied `oai-authenticated-user-*` headers.
+## Voice
 
-## Voice chat
-
-Microphone access is optional. Voice uses peer-to-peer WebRTC with STUN and no TURN relay, so restrictive networks can prevent voice connections. Text chat stays available. Microphone recording is not implemented.
+Microphone access is optional. WebRTC uses STUN without a TURN relay; restrictive networks may prevent voice connections. Text chat remains available. No microphone recording is implemented.
 
 ## Source and deployment
 
-This repository is a source snapshot of beta commit `b94aa2c9a4677c0f0214c75fd0fc205b2ca798f4`. GitHub commits do not automatically deploy the chatgpt.site version.
+Source snapshot of main Site commit `574e112fc2d6e7d753008ec87b60b99cda1e96d7`. GitHub commits do not automatically deploy the chatgpt.site application. No chat history, account records, or secrets are uploaded.

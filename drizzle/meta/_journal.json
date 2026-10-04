@@ -15,6 +15,13 @@
       "when": 1791114501507,
       "tag": "0001_complete_thunderbolt_ross",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "6",
+      "when": 1791119080105,
+      "tag": "0002_main_fresh_start",
+      "breakpoints": true
     }
   ]
 }
