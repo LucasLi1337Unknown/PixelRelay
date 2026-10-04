@@ -6,8 +6,6 @@ A retro pixel chat world by Lucas — chat, meet friends, and play together.
 
 **[Pixel Relay — main site](https://pixel-relay.lucasli0608.chatgpt.site/)** · currently private, with ChatGPT sign-in.
 
-[Separate public beta](https://pixel-relay-beta.lucasli0608.chatgpt.site/) · email sign-in is available there. Main-site email sign-in awaits configuration of its Supabase verification return URL.
-
 The application is hosted on **chatgpt.site**. GitHub stores the source; GitHub Pages alone cannot run the authentication, server routes, or database used by this app.
 
 ## Features
